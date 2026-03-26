@@ -72,10 +72,12 @@ const QUESTIONS = [
   },
 ];
 
+let userPrompt = "";
 
-let current = 0;
-let answers = new Array(QUESTIONS.length).fill(null); // selected choice index per Q
-
+const promptCard    = document.getElementById("promptCard");
+const userPromptEl  = document.getElementById("userPrompt");
+const btnStartQuiz  = document.getElementById("btnStartQuiz");
+ 
 const card          = document.getElementById("card");
 const progressFill  = document.getElementById("progressFill");
 const progressLabel = document.getElementById("progressLabel");
@@ -91,7 +93,24 @@ const resultHeading = document.getElementById("resultHeading");
 const resultSub     = document.getElementById("resultSub");
 const btnRestart    = document.getElementById("btnRestart");
 
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null); // selected choice index per Q
 
+btnStartQuiz.addEventListener("click", () => {
+  // Read whatever the user typed (empty string is fine)
+  userPrompt = userPromptEl.value.trim();
+ 
+  // Animate prompt card out, quiz card in
+  promptCard.classList.add("exiting");
+  setTimeout(() => {
+    promptCard.classList.remove("exiting");
+    promptCard.hidden = true;
+ 
+    card.hidden = false;
+    populate();
+    card.classList.add("entering");
+  }, 190);
+});
 
 function render() {
   card.classList.remove("entering");
@@ -149,6 +168,20 @@ function select(ci) {
 btnBack.addEventListener("click", () => {
   if (current > 0) { current--; render(); }
 });
+ 
+btnNext.addEventListener("click", () => {
+  if (answers[current] === null) return;
+  if (current < QUESTIONS.length - 1) {
+    current++;
+    render();
+  } else {
+    submit();
+  }
+});
+
+btnBack.addEventListener("click", () => {
+  if (current > 0) { current--; render(); }
+});
 
 btnNext.addEventListener("click", () => {
   if (answers[current] === null) return;
@@ -169,8 +202,8 @@ btnRestart.addEventListener("click", () => {
     resultCard.classList.remove("exiting");
     resultCard.hidden = true;
     card.hidden       = false;
-    populate();
     card.classList.add("entering");
+    setTimeout(() => card.classList.remove("entering"), 400);
     progressFill.style.width  = "0%";
     progressLabel.textContent = `Question 1 of ${QUESTIONS.length}`;
     progressPct.textContent   = "0%";
