@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <span class="progress-label" id="progressLabel">Question 1 of 8</span>
+      <span class="progress-pct"   id="progressPct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Quiz card -->
+    <div class="card" id="card">
+      <div class="q-meta">
+        <span class="q-number" id="qNumber">01 —</span>
+      </div>
+      <h2 class="q-text" id="qText"></h2>
+      <div class="choices" id="choices"></div>
+      <div class="nav">
+        <button class="btn-back" id="btnBack" disabled>Back</button>
+        <button class="btn-next" id="btnNext" disabled>Next</button>
+      </div>
+    </div>
+
+    <!-- Result card (hidden until complete) -->
+    <div class="card result-card" id="resultCard" hidden>
+      <p class="q-number" id="outcomeLabel">Result —</p>
+      <h2 class="result-heading" id="resultHeading">Calculating...</h2>
+      <p class="result-sub" id="resultSub"></p>
+      <div class="nav" style="justify-content:center;">
+        <button class="btn-next" id="btnRestart">Take it again</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="quiz.js"></script>
+</body>
+</html>
