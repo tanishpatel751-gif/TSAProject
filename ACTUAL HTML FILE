@@ -21,6 +21,38 @@
       <div class="progress-fill" id="progressFill"></div>
     </div>
 
+    <!-- Prompt card (shown first) -->
+    <div class="card" id="promptCard">
+      <div class="q-meta">
+        <span class="q-number">00 —</span>
+      </div>
+      <h2 class="q-text">Before we begin</h2>
+      <p class="result-sub" style="margin-bottom: 1.2rem;">
+        Enter a prompt or note that will be sent along with your results.
+      </p>
+      <textarea
+        id="userPrompt"
+        placeholder="Type your prompt here..."
+        rows="4"
+        style="
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0.75rem 1rem;
+          font-family: inherit;
+          font-size: 1rem;
+          border: 2px solid var(--border, #ccc);
+          border-radius: 8px;
+          resize: vertical;
+          background: transparent;
+          color: inherit;
+          margin-bottom: 1.5rem;
+        "
+      ></textarea>
+      <div class="nav" style="justify-content: flex-end;">
+        <button class="btn-next" id="btnStartQuiz">Start Quiz</button>
+      </div>
+    </div>
+
     <!-- Quiz card -->
     <div class="card" id="card">
       <div class="q-meta">
