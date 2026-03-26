@@ -1,0 +1,237 @@
+const API_URL = "http://localhost:5000/result";
+// the port should be changed later; just placeholder
+const QUESTIONS = [
+  {
+    text: "Q1",
+    choices: [
+      { label: "A",         points: { bucket1: 3, bucket6: 1 } },
+      { label: "B",    points: { bucket2: 2, bucket3: 2 } },
+      { label: "C",      points: { bucket5: 3 } },
+      { label: "D",       points: { bucket6: 3, bucket4: 1 } },
+    ],
+  },
+  {
+    text: "Q",
+    choices: [
+      { label: "A",                   points: { bucket1: 3 } },
+      { label: "B",   points: { bucket3: 3, bucket2: 1 } },
+      { label: "C",      points: { bucket5: 3, bucket6: 1 } },
+      { label: "D",       points: { bucket2: 2, bucket1: 1 } },
+    ],
+  },
+  {
+    text: "Q3",
+    choices: [
+      { label: "A",                 points: { bucket1: 3 } },
+      { label: "B",                         points: { bucket4: 3, bucket3: 1 } },
+      { label: "C",         points: { bucket5: 2, bucket4: 2 } },
+    ],
+  },
+  {
+    text: "Q4",
+    choices: [
+      { label: "A",              points: { bucket1: 2, bucket6: 2 } },
+      { label: "B",             points: { bucket3: 3, bucket5: 1 } },
+      { label: "C",                           points: { bucket2: 3, bucket4: 1 } },
+      { label: "D",                 points: { bucket5: 3, bucket6: 1 } },
+    ],
+  },
+  {
+    text: "Q5",
+    choices: [
+      { label: "A",           points: { bucket1: 3, bucket2: 1 } },
+      { label: "B",           points: { bucket3: 3, bucket4: 1 } },
+      { label: "C",                     points: { bucket6: 3, bucket1: 1 } },
+    ],
+  },
+  {
+    text: "Q6",
+    choices: [
+      { label: "A",                points: { bucket1: 3, bucket2: 1 } },
+      { label: "B",                points: { bucket3: 3, bucket2: 2 } },
+      { label: "C",                       points: { bucket5: 3, bucket6: 1 } },
+      { label: "D",                          points: { bucket2: 3, bucket4: 1 } },
+    ],
+  },
+  {
+    text: "Q7",
+    choices: [
+      { label: "A",                   points: { bucket1: 2, bucket2: 2 } },
+      { label: "B",                 points: { bucket4: 3, bucket3: 1 } },
+      { label: "C",                      points: { bucket5: 3 } },
+    ],
+  },
+  {
+    text: "Q8",
+    choices: [
+      { label: "A",                       points: { bucket6: 3, bucket1: 1 } },
+      { label: "B",            points: { bucket5: 3, bucket3: 1 } },
+      { label: "C",                    points: { bucket4: 3 } },
+      { label: "D", points: { bucket3: 2, bucket4: 2 } },
+    ],
+  },
+];
+
+
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null); // selected choice index per Q
+
+const card          = document.getElementById("card");
+const progressFill  = document.getElementById("progressFill");
+const progressLabel = document.getElementById("progressLabel");
+const progressPct   = document.getElementById("progressPct");
+const qNumber       = document.getElementById("qNumber");
+const qText         = document.getElementById("qText");
+const choicesEl     = document.getElementById("choices");
+const btnBack       = document.getElementById("btnBack");
+const btnNext       = document.getElementById("btnNext");
+const resultCard    = document.getElementById("resultCard");
+const outcomeLabel  = document.getElementById("outcomeLabel");
+const resultHeading = document.getElementById("resultHeading");
+const resultSub     = document.getElementById("resultSub");
+const btnRestart    = document.getElementById("btnRestart");
+
+
+
+function render() {
+  card.classList.remove("entering");
+  card.classList.add("exiting");
+
+  setTimeout(() => {
+    card.classList.remove("exiting");
+    populate();
+    card.classList.add("entering");
+  }, 190);
+}
+
+function populate() {
+  const q       = QUESTIONS[current];
+  const letters = ["A", "B", "C", "D"];
+  const pct     = Math.round((current / QUESTIONS.length) * 100);
+
+  // Progress
+  progressFill.style.width    = pct + "%";
+  progressLabel.textContent   = `Question ${current + 1} of ${QUESTIONS.length}`;
+  progressPct.textContent     = pct + "%";
+
+  // Question
+  qNumber.textContent = String(current + 1).padStart(2, "0") + " —";
+  qText.textContent   = q.text;
+
+  // Choices
+  choicesEl.innerHTML = "";
+  q.choices.forEach((c, ci) => {
+    const div = document.createElement("div");
+    div.className = "choice" + (answers[current] === ci ? " selected" : "");
+    div.innerHTML = `
+      <span class="choice-letter">${letters[ci]}</span>
+      <span class="choice-text">${c.label}</span>
+    `;
+    div.addEventListener("click", () => select(ci));
+    choicesEl.appendChild(div);
+  });
+
+  btnBack.disabled = current === 0;
+  btnNext.disabled = answers[current] === null;
+  btnNext.textContent = current === QUESTIONS.length - 1 ? "Finish" : "Next";
+}
+
+function select(ci) {
+  answers[current] = ci;
+  choicesEl.querySelectorAll(".choice").forEach((el, i) => {
+    el.classList.toggle("selected", i === ci);
+    const letter = el.querySelector(".choice-letter");
+    letter.getBoundingClientRect();
+  });
+  btnNext.disabled = false;
+}
+
+btnBack.addEventListener("click", () => {
+  if (current > 0) { current--; render(); }
+});
+
+btnNext.addEventListener("click", () => {
+  if (answers[current] === null) return;
+  if (current < QUESTIONS.length - 1) {
+    current++;
+    render();
+  } else {
+    submit();
+  }
+});
+
+btnRestart.addEventListener("click", () => {
+  current = 0;
+  answers = new Array(QUESTIONS.length).fill(null);
+
+  resultCard.classList.add("exiting");
+  setTimeout(() => {
+    resultCard.classList.remove("exiting");
+    resultCard.hidden = true;
+    card.hidden       = false;
+    populate();
+    card.classList.add("entering");
+    progressFill.style.width  = "0%";
+    progressLabel.textContent = `Question 1 of ${QUESTIONS.length}`;
+    progressPct.textContent   = "0%";
+  }, 190);
+});
+
+function tallyBuckets() {
+  const buckets = {};
+  QUESTIONS.forEach((q, qi) => {
+    const ci = answers[qi];
+    if (ci === null) return;
+    const pts = q.choices[ci].points;
+    for (const [bucket, val] of Object.entries(pts)) {
+      buckets[bucket] = (buckets[bucket] || 0) + val;
+    }
+  });
+  return buckets;
+}
+
+
+async function submit() {
+  const buckets = tallyBuckets();
+
+  card.classList.add("exiting");
+  setTimeout(() => {
+    card.hidden = true;
+    card.classList.remove("exiting");
+    resultCard.hidden = false;
+    resultCard.classList.add("entering");
+    setTimeout(() => resultCard.classList.remove("entering"), 400);
+  }, 190);
+
+  progressFill.style.width  = "100%";
+  progressLabel.textContent = "Complete";
+  progressPct.textContent   = "100%";
+
+  outcomeLabel.textContent  = "Oh no!";
+  resultHeading.textContent = "One moment...";
+  resultSub.textContent     = "";
+
+  try {
+    const res = await fetch(API_URL, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ buckets }),
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    outcomeLabel.textContent  = (data.outcome || "Result") + " —";
+    resultHeading.textContent = data.title       || data.outcome;
+    resultSub.textContent     = data.description || "";
+
+  } catch (err) {
+    outcomeLabel.textContent  = "Oh no!";
+    resultHeading.textContent = "Couldn't reach the server.";
+    resultSub.textContent     = "Make sure Flask is running on port [insert port here], then try again.";
+    console.error(err);
+  }
+}
+
+populate();
+card.classList.add("entering");
