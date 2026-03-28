@@ -1,3 +1,5 @@
+import mermaid from 'https://jsdelivr.net';
+mermaid.initialize({ startOnLoad: true });
 // Adding form submission for the first form to determine the career
 const form = document.getElementById('form'); 
 
@@ -26,19 +28,20 @@ const response = await fetch('http://100.101.119.116:11434/api/generate', {
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        model: 'minimax-m.25:cloud',  
-        prompt:{prompt}, 
-        stream:false      
+        "model": "minimax-m2.5:cloud",
+        "prompt": prompt,
+        "stream": false
     })
 }); 
 //Taken from Mermaid Syntax and Rendering
-const data = await response.json();
+const mermaidResponse = await fetch('/get-diagram'); // Fetch the mermaid syntax from the backend
+const data = await mermaidResponse.json();
 const mermaidSyntax = data.response; // e.g., "graph TD; A[Start] --> B[Water];"
 
 // 2. Render it (requires mermaid library loaded)
 import mermaid from 'mermaid';
 mermaid.initialize({ startOnLoad: true });
 
-// Pass mermaidSyntax to a <div> with class "mermaid"
+// Pass mermaidSyntax to a <div> with class "mermaid", put in HTML file
 document.getElementById('chart').innerHTML = mermaidSyntax;
 mermaid.contentLoaded();
