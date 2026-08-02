@@ -104,7 +104,7 @@ TSAProject/
 
 1. The user enters a career they want to explore.
 2. The frontend sends the request to the Flask backend.
-3. The backend communicates with an AI model through the Ollama API.
+3. The backend communicates with an AI model through the Ollama API. Communicates to my custom server using a temporary IP address **Please do not try and access**
 4. The AI generates a structured sequence of career-development steps.
 5. The backend converts those steps into Mermaid diagram syntax.
 6. Mermaid.js renders the roadmap as an interactive flowchart.
